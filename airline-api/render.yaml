@@ -1,0 +1,21 @@
+# Render Blueprint — يسمح بديبلوي بضغطة واحدة عن طريق "New +" -> "Blueprint" في Render
+# ويربط ملف .env.example تلقائيًا كقائمة الـ environment variables المطلوبة (تتضاف يدويًا بقيمها الحقيقية)
+services:
+  - type: web
+    name: airline-api
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: FRONTEND_URL
+        sync: false
