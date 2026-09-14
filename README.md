@@ -1,53 +1,168 @@
-# ✈️ Airline Booking App
+✈️ Airline Booking App
 
-Full-stack airline booking application: Node/Express/MongoDB API + React/Tailwind frontend.
+A full-stack airline booking application built with Node.js, Express, MongoDB, React, and Tailwind CSS.
 
-- 🔗 **Live demo**: _add your Vercel URL here after deploying_
-- 📚 **API docs (Swagger)**: _add your Render URL + `/api-docs` here_
+Users can search for flights, select seats, create and manage bookings, while administrators can manage flights and monitor bookings through a dedicated dashboard.
 
-| Demo account | Email | Password |
-|---|---|---|
-| Admin | admin@airline.com | admin123 |
-| User | user@airline.com | user1234 |
-_(created by `npm run seed` — see [`airline-api/README.md`](airline-api/README.md))_
+🔗 Links
 
-## Structure
+* Live Demo: https://airline-booking-app-six.vercel.app
+* API: https://airline-booking-app-clbo.onrender.com
+* Swagger API Docs: https://airline-booking-app-clbo.onrender.com/api-docs
 
-```
-airline-booking-app/
-├── airline-api/        # Express + MongoDB REST API — see its README for full docs
-├── airline-frontend/    # React + Tailwind client — see its README for full docs
-└── DEPLOYMENT.md        # step-by-step guide to deploy both, free
-```
+🔐 Demo Accounts
 
-## Run locally
+Role	Email	Password
+Admin	admin@airline.com	admin123
+User	user@airline.com	user1234
 
-```bash
-# Terminal 1 — backend
+Demo accounts can also be created using npm run seed.
+
+🛠️ Tech Stack
+
+Backend
+
+* Node.js
+* Express.js
+* MongoDB
+* Mongoose
+* JWT Authentication
+* Jest
+* Supertest
+* Swagger / OpenAPI
+
+Frontend
+
+* React
+* Tailwind CSS
+* React Router
+* Context API
+
+✨ Features
+
+User
+
+* Search and browse available flights
+* Select a flight
+* Select seats
+* Create bookings
+* View and manage bookings
+* Cancel bookings
+* Authentication and authorization
+
+Admin
+
+* Admin authentication
+* Manage flights
+* View bookings
+* Monitor booking statistics through the dashboard
+
+Backend
+
+* RESTful API
+* JWT-based authentication
+* Role-based authorization
+* Request validation
+* Centralized error handling
+* Pagination
+* Swagger API documentation
+* MongoDB transactions
+* Atomic seat locking to prevent double-booking
+* Automated API tests with Jest and Supertest
+
+🔒 Booking & Seat Management
+
+Booking creation and cancellation use MongoDB transactions.
+
+Seat selection uses an atomic locking mechanism to prevent two users from booking the same seat concurrently.
+
+The concurrency behavior is covered by automated tests.
+
+🧪 Testing
+
+The backend includes a Jest + Supertest test suite using an in-memory MongoDB replica set, so the tests can run without requiring an external database.
+
+To run the tests:
+
 cd airline-api
 npm install
-cp .env.example .env      # fill in MONGO_URI, JWT_SECRET
-npm run seed               # optional: sample data + demo accounts
+npm test
+
+📁 Project Structure
+
+airline-booking-app/
+├── airline-api/           # Express + MongoDB REST API
+├── airline-frontend/      # React + Tailwind frontend
+└── DEPLOYMENT.md          # Deployment instructions
+
+Each subfolder contains its own README with additional documentation, endpoint details, and implementation notes.
+
+🚀 Run Locally
+
+1. Clone the repository
+
+git clone <your-github-repository-url>
+cd airline-booking-app
+
+2. Run the Backend
+
+cd airline-api
+npm install
+cp .env.example .env
+
+Configure your .env file with:
+
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+
+Then optionally create the demo accounts and sample data:
+
+npm run seed
+
+Start the backend:
+
 npm run dev
 
-# Terminal 2 — frontend
+Backend:
+
+http://localhost:5000
+
+Swagger:
+
+http://localhost:5000/api-docs
+
+3. Run the Frontend
+
+Open another terminal:
+
 cd airline-frontend
 npm install
-cp .env.example .env      # VITE_API_URL=http://localhost:5000/api
+cp .env.example .env
+
+Set the API URL:
+
+VITE_API_URL=http://localhost:5000/api
+
+Start the frontend:
+
 npm run dev
-```
 
-Frontend: `http://localhost:5173` · Backend: `http://localhost:5000` · Swagger: `http://localhost:5000/api-docs`
+Frontend:
 
-## Deploying
+http://localhost:5173
 
-See [`DEPLOYMENT.md`](DEPLOYMENT.md) for the full walkthrough (MongoDB Atlas → Render → Vercel, all free tier).
+🌐 Deployment
 
-## Highlights
+The application can be deployed using:
 
-- Booking creation/cancellation wrapped in MongoDB transactions, with an atomic seat lock that prevents two users from double-booking the same seat under concurrent load (covered by a dedicated test)
-- Centralized error handling, request validation, pagination, and Swagger docs on the API
-- Jest + Supertest test suite running on an in-memory MongoDB replica set (no external DB needed to run tests)
-- React frontend with a shared design system (Tailwind tokens), a booking flow that carries state across pages via context, and an admin dashboard with live stats
+* MongoDB Atlas — Database
+* Render — Backend API
+* Vercel — React Frontend
 
-See each subfolder's own README for full endpoint lists, design notes, and architecture details.
+The deployed application is available through the links above.
+
+📚 API Documentation
+
+The complete REST API is documented using Swagger/OpenAPI.
+
+Swagger: https://airline-booking-app-clbo.onrender.com/api-docs
