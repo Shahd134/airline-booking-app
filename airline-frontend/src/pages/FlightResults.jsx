@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SlidersHorizontal, PlaneTakeoff } from 'lucide-react';
 import { searchFlights } from '../api/flights';
@@ -10,6 +10,10 @@ import EmptyState from '../components/EmptyState';
 import Pagination from '../components/Pagination';
 import { getErrorMessage } from '../lib/axios';
 
+// أقصى عدد محاولات لو أول نتيجة رجعت فاضية (ممكن يحصل ده لو السيرفر لسه بيصحى من وضع الخمول)
+const MAX_EMPTY_RETRIES = 2;
+const RETRY_DELAY_MS = 1200;
+
 export default function FlightResults() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [flights, setFlights] = useState([]);
@@ -19,22 +23,44 @@ export default function FlightResults() {
   const [error, setError] = useState('');
 
   const passengers = Number(searchParams.get('passengers') || 1);
+  const requestIdRef = useRef(0);
 
   useEffect(() => {
     getAirports().then((res) => setAirports(res.data)).catch(() => {});
   }, []);
 
   useEffect(() => {
+    const currentRequestId = ++requestIdRef.current;
+    const params = Object.fromEntries(searchParams.entries());
+
     setLoading(true);
     setError('');
-    const params = Object.fromEntries(searchParams.entries());
-    searchFlights(params)
-      .then((res) => {
-        setFlights(res.data);
-        setMeta({ page: res.page, pages: res.pages, total: res.total });
-      })
-      .catch((err) => setError(getErrorMessage(err)))
-      .finally(() => setLoading(false));
+
+    const attemptFetch = (retriesLeft) => {
+      searchFlights(params)
+        .then((res) => {
+          // لو المستخدم غيّر البحث وإحنا لسه بنحاول، تجاهلي النتيجة القديمة دي
+          if (currentRequestId !== requestIdRef.current) return;
+
+          // لو رجعت النتيجة فاضية بس لسه عندنا محاولات، جربي تاني بعد شوية
+          // (بيحصل أحيانًا لحظة ما السيرفر بيصحى من وضع الخمول)
+          if (res.data.length === 0 && retriesLeft > 0) {
+            setTimeout(() => attemptFetch(retriesLeft - 1), RETRY_DELAY_MS);
+            return;
+          }
+
+          setFlights(res.data);
+          setMeta({ page: res.page, pages: res.pages, total: res.total });
+          setLoading(false);
+        })
+        .catch((err) => {
+          if (currentRequestId !== requestIdRef.current) return;
+          setError(getErrorMessage(err));
+          setLoading(false);
+        });
+    };
+
+    attemptFetch(MAX_EMPTY_RETRIES);
   }, [searchParams]);
 
   const updateParam = (key, value) => {
